@@ -22,12 +22,13 @@ def game():
         move = 1
         print_board(board)
         while not game_over(board):
-            print("X Move") if move == 1 else print("O Move")
             if move == 1:
+                print("X Move")
                 board = input_move(board, move)
                 # board = random_move(board, move)
                 # board = computer_move(board, move)
             else:
+                print("O Move")
                 board = computer_move(board, move)
                 # board = random_move(board, move)
                 # board = input_move(board, move)
@@ -44,7 +45,10 @@ def game():
             print("Its a Tie")
         else:
             print("Winner is: ")
-            print("X") if winner_move == 1 else print("O")
+            if winner_move == 1:
+                print("X")
+            else:
+                print("O")
         print("--------------------------------------------")
 
     for key, value in results.items():
@@ -76,34 +80,31 @@ def random_move(board, move):
     return board
 
 
-SEARCHED = {}
-
-
 def computer_move(board, move):
     """
         computer_move: computer finds best move to play
     """
-    global SEARCHED
-    computer_move_search(board, move)
+    searched = {}
+    computer_move_search(board, move, searched)
     move_delta = -1
     winning_move = random_move(board, move)
-    for i in SEARCHED:
+    for i in searched:
         move_count = 0
         other_count = 0
-        if move in SEARCHED[i]:
-            move_count = SEARCHED[i][move]
-        if move % 2 + 1 in SEARCHED[i]:
-            other_count = SEARCHED[i][move % 2 + 1]
+        if move in searched[i]:
+            move_count = searched[i][move]
+        if move % 2 + 1 in searched[i]:
+            other_count = searched[i][move % 2 + 1]
         if (move_count - other_count) > move_delta:
             move_delta = move_count - other_count
             winning_move = i
-    print(SEARCHED)
+    print(searched)
     board = board | (move << 2 * winning_move)
-    SEARCHED = {}
+    searched = {}
     return board
 
 
-def computer_move_search(board, move):
+def computer_move_search(board, move, searched):
     """
         computer_move_search: computer fills results array with all possible moves
     """
@@ -111,15 +112,14 @@ def computer_move_search(board, move):
         if (board >> i * 2 & 3) == 0:
             board = board | (move << 2 * i)
             game_res = game_over(board)
-            global SEARCHED
 
-            if i not in SEARCHED:
-                SEARCHED[i] = {}
+            if i not in searched:
+                searched[i] = {}
 
             if game_res not in [1, 2, 3]:
-                computer_move_search(board, move % 2 + 1)
+                computer_move_search(board, move % 2 + 1, searched)
             else:
-                sub_search = SEARCHED[i]
+                sub_search = searched[i]
                 if game_res in sub_search:
                     sub_search[game_res] += 1
                 else:
@@ -155,6 +155,7 @@ def check_rows(board):
                 and ((board >> 4 + (6 * i) & 3) == j)
             ):
                 return j
+    return None
 
 
 def check_cols(board):
@@ -169,6 +170,7 @@ def check_cols(board):
                 and ((board >> 12 + (2 * i) & 3) == j)
             ):
                 return j
+    return None
 
 
 def check_diag(board):
@@ -176,14 +178,16 @@ def check_diag(board):
         check_diag: determines if any diag is complete
     """
     for i in [1, 2]:
+        if ((board & 3) == i) and ((board >> 8 & 3) == i) and ((board >> 16 & 3) == i):
+            return i
+
         if (
-            ((board & 3) == i) and ((board >> 8 & 3) == i) and ((board >> 16 & 3) == i)
-        ) or (
             ((board >> 4 & 3) == i)
             and ((board >> 8 & 3) == i)
             and ((board >> 12 & 3) == i)
         ):
             return i
+    return None
 
 
 def check_tie(board):
