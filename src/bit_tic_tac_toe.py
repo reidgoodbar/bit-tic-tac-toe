@@ -87,6 +87,7 @@ def computer_move(board, move):
     searched = {}
     computer_move_search(board, move, searched)
     move_delta = -1
+    
     # Why random move?
     winning_move = random_move(board, move)
 
