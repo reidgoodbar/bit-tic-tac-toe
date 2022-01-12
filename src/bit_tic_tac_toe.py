@@ -91,16 +91,17 @@ def computer_move(board, move):
     # Why random move?
     winning_move = random_move(board, move)
 
-    for i in searched:
+    for i, val in searched.items():
         move_count = 0
         other_count = 0
-        if move in searched[i]:
-            move_count = searched[i][move]
-        if move % 2 + 1 in searched[i]:
-            other_count = searched[i][move % 2 + 1]
+        if move in val:
+            move_count = val[move]
+        if move % 2 + 1 in val:
+            other_count = val[move % 2 + 1]
         if (move_count - other_count) > move_delta:
             move_delta = move_count - other_count
             winning_move = i
+
     print(searched)
     board = board | (move << 2 * winning_move)
     searched = {}
