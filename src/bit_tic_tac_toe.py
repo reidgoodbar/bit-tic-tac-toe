@@ -84,50 +84,62 @@ def computer_move(board, move):
     """
         computer_move: computer finds best move to play
     """
-    searched = {}
-    computer_move_search(board, move, searched)
-    move_delta = -1
 
+    moves = computer_move_search(board, move, move, 0)
+    print(moves)
+    winning_move = moves.index(max(moves))
     # Why random move?
-    winning_move = random_move(board, move)
+    # winning_move = random_move(board, move)
 
-    for i, val in searched.items():
-        move_count = 0
-        other_count = 0
-        if move in val:
-            move_count = val[move]
-        if move % 2 + 1 in val:
-            other_count = val[move % 2 + 1]
-        if (move_count - other_count) > move_delta:
-            move_delta = move_count - other_count
-            winning_move = i
+    # for i, val in searched.items():
+    #     move_count = 0
+    #     other_count = 0
+    #     if move in val:
+    #         move_count = val[move]
+    #     if move % 2 + 1 in val:
+    #         other_count = val[move % 2 + 1]
+    #     if (move_count - other_count) > move_delta:
+    #         move_delta = move_count - other_count
+    #         winning_move = i
 
-    print(searched)
+    # print(searched)
     board = board | (move << 2 * winning_move)
-    searched = {}
+    # searched = {}
     return board
 
 
-def computer_move_search(board, move, searched):
+def computer_move_search(board, move, curr_move, depth):
     """
         computer_move_search: computer fills results array with all possible moves
     """
+    print("---------------")
+    print(curr_move)
+    res = [0] * 9
+    original_board = board
     for i in range(9):
-        if (board >> i * 2 & 3) == 0:
-            board = board | (move << 2 * i)
+        if ((board >> (i * 2)) & 3) == 0:
+            board = board | (curr_move << 2 * i)
+            print_board(board)
             game_res = game_over(board)
-
-            if i not in searched:
-                searched[i] = {}
-
             if game_res not in [1, 2, 3]:
-                computer_move_search(board, move % 2 + 1, searched)
-            else:
-                sub_search = searched[i]
-                if game_res in sub_search:
-                    sub_search[game_res] += 1
+                if move == curr_move:
+                    res[i] = min(
+                        computer_move_search(board, move, (curr_move % 2 + 1), depth)
+                    )
                 else:
-                    sub_search[game_res] = 1
+                    res[i] = max(
+                        computer_move_search(board, move, (curr_move % 2 + 1), depth)
+                    )
+            elif game_res == move:
+                res[i] = 10
+            elif game_res == move % 2 + 1:
+                res[i] = -10
+            else:
+                res[i] = 0
+            board = original_board
+    print(res)
+    print("---------------")
+    return res
 
 
 def print_board(board):
