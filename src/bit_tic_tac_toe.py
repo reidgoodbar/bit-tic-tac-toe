@@ -88,7 +88,7 @@ def computer_move(board, move):
     moves = computer_move_search(board, move, move, 0)
     print(moves)
     winning_move = moves.index(max(moves))
-    # Why random move?
+    
     # winning_move = random_move(board, move)
 
     # for i, val in searched.items():
