@@ -88,7 +88,7 @@ def computer_move(board, move):
     moves = computer_move_search(board, move, move, 0)
     print(moves)
     winning_move = moves.index(max(moves))
-    
+
     # winning_move = random_move(board, move)
 
     # for i, val in searched.items():
@@ -112,6 +112,7 @@ def computer_move_search(board, move, curr_move, depth):
     """
         computer_move_search: computer fills results array with all possible moves
     """
+    
     print("---------------")
     print(curr_move)
     res = [0] * 9
