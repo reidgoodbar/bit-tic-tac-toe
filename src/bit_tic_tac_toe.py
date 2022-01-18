@@ -5,7 +5,6 @@
     player and multi-player tic tac toe, board is an int with each space
     being two bits, top left is the first two bits and the bottom right
     is the 17th and 18th bits.  Uses minmax to find optimal move for computer.
-    move: flag for whose move it is, 1 for player 1 and 2 for player 2
 """
 
 import random
